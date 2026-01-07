@@ -20,4 +20,13 @@ function draw() {
     x += dx;
     y += dy;
 }
-setInterval(draw, 10);
+
+function startGame() {
+    setInterval(draw, 10);
+}
+
+const runButton = document.getElementById("runButton");
+runButton.addEventListener("click", () => {
+    startGame();
+    runButton.disabled = true;
+})
