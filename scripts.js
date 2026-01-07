@@ -16,11 +16,11 @@ function drawBall() {
 }
 
 function bounceLogic() {
-    if (y + dy < 0 || y + dy > canvas.height) {
+    if (y + dy < ballRadius || y + dy > canvas.height - ballRadius) {
         dy = -dy;
     }
 
-    if (x + dx < 0 || x + dx > canvas.width) {
+    if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
         dx = -dx;
     }
 }
