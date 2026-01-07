@@ -6,6 +6,13 @@ let y = canvas.height - 30;
 let dx = 2;
 let dy = -2;
 const ballRadius = 10;
+const keys = {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+    action: false
+};
 
 function drawBall() {
     ctx.beginPath();
@@ -32,9 +39,39 @@ function draw() {
     x += dx;
     y += dy;
 }
+document.addEventListener("keydown", e => setKey(e, true));
+document.addEventListener("keyup", e => setKey(e, false));
 
-function startGame() {
-    setInterval(draw, 10);
+function setKey(e, isDown) {
+    switch (e.key) {
+        case "Right":
+        case "ArrowRight":
+        case "d":
+        case "D":
+            keys.right = isDown;
+            break;
+        case "Left":
+        case "ArrowLeft":
+        case "a":
+        case "A":
+            keys.left = isDown;
+            break;
+        case "Up":
+        case "ArrowUp":
+        case "w":
+        case "W":
+            keys.up = isDown;
+            break;
+        case "Down":
+        case "ArrowDown":
+        case "s":
+        case "S":
+            keys.down = isDown;
+            break;
+        case " ":
+            keys.action = isDown;
+            break;
+    }
 }
 
 const runButton = document.getElementById("runButton");
@@ -42,3 +79,7 @@ runButton.addEventListener("click", () => {
     startGame();
     runButton.disabled = true;
 })
+
+function startGame() {
+    setInterval(draw, 10);
+}
