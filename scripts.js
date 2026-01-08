@@ -7,7 +7,15 @@ let dx = 0;
 let dy = 0;
 const playerRadius = 10;
 const FRICTION = 0.96;
+
 const keys = {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+    action: false
+};
+const prevKeys = {
     left: false,
     right: false,
     up: false,
@@ -17,11 +25,16 @@ const keys = {
 
 let isDashing = false;
 let dashTimer = 0;
+let dashCooldown = 0;
 
 const DASH_SPEED = 10;
 const DASH_DURATION = 10;
 const DASH_FRICTION = 0.98;
 const DASH_BRAKE = 0.7; 
+
+function justPressed(key) {
+    return keys[key] && !prevKeys[key];
+}
 
 function drawBall() {
     ctx.beginPath();
@@ -31,7 +44,44 @@ function drawBall() {
     ctx.closePath();
 }
 
+function tryDash() {
+    if (isDashing || dashCooldown > 0) return;
+
+    if (keys.right) {
+        dx = DASH_SPEED;
+    } else if (keys.left) {
+        dx = -DASH_SPEED;
+    } else {
+        return;
+    }
+
+    isDashing = true;
+    dashTimer = DASH_DURATION;
+    dashCooldown = 30;
+}
+
+function handleDashMovement() {
+    dashTimer--;
+
+    if (keys.left && dx > 0) {
+        dx *= DASH_BRAKE;
+    } else if (keys.right && dx < 0) {
+        dx *= DASH_BRAKE;
+    } else {
+        dx *= DASH_FRICTION;
+    }
+
+    if (dashTimer <= 0) {
+        isDashing = false;
+    }
+}
+
 function playerMovement() {
+    if (isDashing) {
+        handleDashMovement();
+        return;
+    }
+
     if (keys.right) {
         dx = Math.min(dx + 0.25, 1.5);
     } else if (keys.left) {
@@ -55,15 +105,28 @@ function bounceLogic() {
 }
 
 function draw() {
+    if (dashCooldown > 0) dashCooldown--;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
+    if (justPressed("action")) {
+        tryDash();
+    }
     playerMovement();
     bounceLogic();
     x += dx;
     y += dy;
-    dx *= FRICTION;
-    dy *= FRICTION;
+
+    if (!isDashing) {
+        dx *= FRICTION;
+        dy *= FRICTION;
+    }
+
+    if (Math.abs(dx) < 0.01) dx = 0;
+    if (Math.abs(dy) < 0.01) dy = 0;
+
+    Object.assign(prevKeys, keys);
 }
+
 document.addEventListener("keydown", e => setKey(e, true));
 document.addEventListener("keyup", e => setKey(e, false));
 
