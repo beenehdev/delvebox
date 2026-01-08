@@ -49,8 +49,8 @@ function bounceLogic() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
-    bounceLogic();
     playerMovement();
+    bounceLogic();
     x += dx;
     y += dy;
     dx *= FRICTION;
