@@ -6,7 +6,7 @@ let y = canvas.height - 30;
 let dx = 0;
 let dy = 0;
 const playerRadius = 10;
-const FRICTION = 0.97;
+const FRICTION = 0.96;
 const keys = {
     left: false,
     right: false,
@@ -14,6 +14,14 @@ const keys = {
     down: false,
     action: false
 };
+
+let isDashing = false;
+let dashTimer = 0;
+
+const DASH_SPEED = 10;
+const DASH_DURATION = 10;
+const DASH_FRICTION = 0.98;
+const DASH_BRAKE = 0.7; 
 
 function drawBall() {
     ctx.beginPath();
