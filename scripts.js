@@ -3,9 +3,10 @@ const ctx = canvas.getContext('2d');
 
 let x = canvas.width / 2;
 let y = canvas.height - 30;
-let dx = 2;
-let dy = -2;
-const ballRadius = 10;
+let dx = 0;
+let dy = 0;
+const playerRadius = 10;
+const FRICTION = 0.97;
 const keys = {
     left: false,
     right: false,
@@ -16,18 +17,31 @@ const keys = {
 
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+    ctx.arc(x, y, playerRadius, 0, Math.PI * 2);
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
 }
 
+function playerMovement() {
+    if (keys.right) {
+        dx = Math.min(dx + 0.25, 1.5);
+    } else if (keys.left) {
+        dx = Math.max(dx - 0.25, -1.5);
+    }
+    if (keys.up) {
+        dy = Math.max(dy - 0.12, -1);   
+    } else if (keys.down) {
+        dy = Math.min(dy + 0.12, 1);
+    }
+}
+
 function bounceLogic() {
-    if (y + dy < ballRadius || y + dy > canvas.height - ballRadius) {
+    if (y + dy < playerRadius || y + dy > canvas.height - playerRadius) {
         dy = -dy;
     }
 
-    if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
+    if (x + dx < playerRadius || x + dx > canvas.width - playerRadius) {
         dx = -dx;
     }
 }
@@ -36,8 +50,11 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
     bounceLogic();
+    playerMovement();
     x += dx;
     y += dy;
+    dx *= FRICTION;
+    dy *= FRICTION;
 }
 document.addEventListener("keydown", e => setKey(e, true));
 document.addEventListener("keyup", e => setKey(e, false));
