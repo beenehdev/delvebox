@@ -1,8 +1,10 @@
 const canvas = document.getElementById("canvasMain");
 const ctx = canvas.getContext('2d');
 
-let x = canvas.width / 2;
-let y = canvas.height - 30;
+let playerX = canvas.width / 2;
+let playerY = canvas.height - 30;
+let obstacleX = Math.min(Math.random() * canvas.width, canvas.width);
+let obstacleY = canvas.height;
 let dx = 0;
 let dy = 0;
 const playerRadius = 10;
@@ -13,14 +15,14 @@ const keys = {
     right: false,
     up: false,
     down: false,
-    action: false
+    action: false,
 };
 const prevKeys = {
     left: false,
     right: false,
     up: false,
     down: false,
-    action: false
+    action: false,
 };
 
 let isDashing = false;
@@ -38,10 +40,15 @@ function justPressed(key) {
 
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, playerRadius, 0, Math.PI * 2);
+    ctx.arc(playerX, playerY, playerRadius, 0, Math.PI * 2);
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
+}
+
+function drawObstacle() {
+    fillRect(obstacleX, obstacleY, 15, 50)
+    color: black; 
 }
 
 function tryDash() {
@@ -95,11 +102,11 @@ function playerMovement() {
 }
 
 function bounceLogic() {
-    if (y + dy < playerRadius || y + dy > canvas.height - playerRadius) {
+    if (playerY + dy < playerRadius || playerY + dy > canvas.height - playerRadius) {
         dy = -dy;
     }
 
-    if (x + dx < playerRadius || x + dx > canvas.width - playerRadius) {
+    if (playerX + dx < playerRadius || playerX + dx > canvas.width - playerRadius) {
         dx = -dx;
     }
 }
@@ -108,13 +115,14 @@ function draw() {
     if (dashCooldown > 0) dashCooldown--;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
+    drawObstacle();
     if (justPressed("action")) {
         tryDash();
     }
     playerMovement();
     bounceLogic();
-    x += dx;
-    y += dy;
+    playerX += dx;
+    playerY += dy;
 
     if (!isDashing) {
         dx *= FRICTION;
