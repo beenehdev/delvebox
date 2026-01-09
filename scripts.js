@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 let playerX = canvas.width / 2;
 let playerY = canvas.height - 30;
 let obstacleX = Math.min(Math.random() * canvas.width, canvas.width);
-let obstacleY = canvas.height;
+let obstacleY = canvas.height - 10;
 let dx = 0;
 let dy = 0;
 const playerRadius = 10;
@@ -47,8 +47,11 @@ function drawBall() {
 }
 
 function drawObstacle() {
-    fillRect(obstacleX, obstacleY, 15, 50)
-    color: black; 
+    ctx.beginPath();
+    ctx.rect(obstacleX, obstacleY, 100, 15);
+    ctx.fillStyle = "black";
+    ctx.fill();
+    ctx.closePath();
 }
 
 function tryDash() {
@@ -68,7 +71,9 @@ function tryDash() {
 }
 
 function handleDashMovement() {
-    dashTimer--;
+    if (dashTimer > 0) {
+        dashTimer--;
+    }
 
     if (keys.left && dx > 0) {
         dx *= DASH_BRAKE;
@@ -78,8 +83,10 @@ function handleDashMovement() {
         dx *= DASH_FRICTION;
     }
 
-    if (dashTimer <= 0) {
-        isDashing = false;
+    if (dx < 1.5 && dx > -1.5) {
+        if (dashTimer <= 0) {
+            isDashing = false;
+        }
     }
 }
 
@@ -94,6 +101,7 @@ function playerMovement() {
     } else if (keys.left) {
         dx = Math.max(dx - 0.25, -1.5);
     }
+    
     if (keys.up) {
         dy = Math.max(dy - 0.12, -1);   
     } else if (keys.down) {
